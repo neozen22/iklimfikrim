@@ -1,1 +1,62 @@
-{% include "layout.html" %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" href="/static/styles/bootstrap.min.css" />
+    <link rel="stylesheet" href="/static/styles/style.css" />
+    <script src="/static/scripts/ckeditor.js"></script>
+    <script src="/static/scripts/script.js"></script>
+    <script src="/static/scripts/bootstrap.min.js"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/29.1.0/classic/ckeditor.js"></script>
+    <title>İklim Fikrim Dergisi</title>
+    
+  </head>
+  <body>
+    <div class="header-container">
+      <div class="flex-column">
+        <img src="/static/img/logo.jpg" alt="" />
+        <h1>İklim Fikrim Dergisi</h1>
+        <h2>Fridays For Future Türkiye</h2>
+      </div>
+    </div>
+    <div class="about-container">
+      <h1 class="container-title">Fridays For Future - Türkiye</h1>
+      <p>
+        Dergimizin hikayesi bir toplantıda dergi çıkarma fikrinin ortaya
+        atılması ile başladı. Herkesin hoşuna giden bu yeni fikrin hayata
+        geçirilmesi de uzun sürmedi. Bir ay içerisinde ekibimiz kuruldu,
+        toplantılar yapıldı, departmanlar belirlendi, dergi isminden derginin
+        işleyişine kadar her şey ayarlandı ve böylece İklim Fikrim Dergisi resmi
+        olarak kurulmuş oldu. Artık her şeyin nasıl başladığını biliyorsunuz,
+        biraz da dergimizin kendisinden bahsedelim. Dergimiz kar amacı gütmeyen
+        online bir dergidir. İklim Fikrim Dergisi Fridays For Future Türkiye
+        çatısı altında kurulmuştur. Dergimizin kuruluş amacı sizleri özellikle
+        iklim krizi gibi güncel problemlerden haberdar etmek, yeni perspektifler
+        oluşturmak ve gençler olarak sesimizi duyurmaktır. Bizden haberdar olmak
+        için <a href="/">@iklimfikrim Instagram hesabını</a> takip etmeyi
+        unutmayın.
+      </p>
+      <p class="author">Fikrim Dergi Ekibi</p>
+    </div>
+    <div class="article-container">
+      <h1>Baskılarımız</h1>
+
+        <ul class="articles">
+          {% for card in articles %}
+          <li class="article-card">
+            <img
+              src="/static/img/thumbnail.jpg"
+              alt=""
+              class="article-thumbnail"
+            />
+            <p class="article-title">1. Baskı</p>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </body>
+</html>

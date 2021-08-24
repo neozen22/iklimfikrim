@@ -1,4 +1,4 @@
-from flask import Flask, render_template, send_from_directory
+from flask import Flask, render_template
 
 
 app = Flask(__name__)
@@ -6,13 +6,8 @@ app = Flask(__name__)
 
 @app.route("/")
 def hello_world():
-    return render_template("index.html")
-
-
-@app.route('/assets/<path:path>')
-def send_js(path):
-    return send_from_directory('css', path)
+    return render_template("index.html", articles=[i for i in range(10)])
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(use_reloader=True, debug=True)

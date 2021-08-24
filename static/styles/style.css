@@ -6,6 +6,16 @@ body {
   background-color: #f8f9fa;
 }
 
+html {
+  overflow-x: hidden;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
 .header-container {
   width: 100vw;
   height: 20%;
@@ -17,16 +27,19 @@ body {
   display: flex;
   justify-content: center;
 }
+
 .header-container img {
   margin-top: 2vh;
   width: 10em;
 }
+
 .header-container h2 {
   color: #ffb443;
 }
+
 .about-container {
   border-radius: 10px;
-  max-width: 70%;
+  max-width: 80%;
   margin: 15px auto;
   text-align: center;
   background-color: #8fff72;
@@ -41,16 +54,45 @@ body {
   font-weight: bold;
 }
 
-.container-title {
-}
-
 .article-container {
   border-radius: 10px;
-  max-width: 70%;
-  margin: 15px auto;
+  max-width: 80%;
+  margin: auto;
+
   text-align: center;
   background-color: #8fff72;
   padding: 15px;
+}
+
+.article-card {
+  margin: 5px;
+  border-radius: 10px;
+  list-style-type: none;
+  background-color: green;
+  width: 20rem;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.article-thumbnail {
+  border-radius: 10px;
+  margin-top: 15px;
+  width: 15rem;
+}
+
+.articles {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center !important;
+  text-indent: 0;
+  list-style-type: none;
+  list-style: none;
+}
+
+.article-title {
+  font-size: 1.4rem;
+  font-weight: bold;
 }
 
 .about-container:hover {
