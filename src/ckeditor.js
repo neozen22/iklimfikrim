@@ -52,7 +52,6 @@ Editor.builtinPlugins = [
 	FontFamily,
 	FontSize,
 	Heading,
-	HtmlComment,
 	Image,
 	ImageCaption,
 	ImageInsert,
