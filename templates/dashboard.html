@@ -1,0 +1,45 @@
+{% extends "navbar.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/styles/bootstrap.min.css" />
+    <link rel="stylesheet" href="/static/styles/style.css" />
+    <script src="/static/scripts/bootstrap.min.js"></script>
+    <script src="/static/scripts/build/ckeditor.js"></script>
+    <script type="module" src="/static/scripts/script.js"></script>
+    <title>Dashboard</title>
+</head>
+<body>
+  {% block body %}
+  <table class="table table-striped">
+    <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Title</th>
+          <th scope="col">Creation Date</th>
+          <th scope="col">Hidden</th>
+        </tr>
+      </thead>
+      <tbody>
+    {% for article in articles %}
+
+
+      <tr>
+        <th scope="row">{{article}}</th>
+        <td>{{articles[article]["title"]}}</td>
+        <td>{{articles[article]["creation_date"]}}</td>
+        <td>{{articles[article]["hidden"]}}</td>
+      </tr>
+
+
+
+
+  {% endfor %}
+</tbody>
+</table>
+  {% endblock %}
+</body>
+</html>

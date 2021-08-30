@@ -42,5 +42,8 @@
   },
   "scripts": {
     "build": "webpack --mode production"
+  },
+  "dependencies": {
+    "jquery": "^3.6.0"
   }
 }

@@ -1,3 +1,6 @@
+{% extends "navbar.html" %}
+
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -13,6 +16,9 @@
     <title>İklim Fikrim Dergisi</title>
   </head>
   <body>
+
+    {% block body %}
+    
     <div class="header-container">
       <div class="flex-column">
         <img src="/static/img/logo.jpg" alt="" />
@@ -55,11 +61,17 @@
           </li>
           {% endfor %}
         </ul>
-        <div data-editor="ClassicEditor" class="editor">
-          <p>ssjsjsjsjs</p>
-        </div>
+
       </div>
     </div>
+    <nav class="navbar navbar-light bg-light">
+      <a class="navbar-brand unclickable" href="#">
+        <img src="/static/img/logo.jpg" width="30" height="30" class="d-inline-block align-top" alt="">
+        Bootstrap
+      </a>
+    </nav>
+    {% endblock %}
+
   </body>
 
 

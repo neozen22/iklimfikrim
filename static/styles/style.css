@@ -102,6 +102,11 @@ ul {
 .bg-green {
   background-color: green;
 }
-.create-navbar {
-  
+.navbar-img {
+  margin-right: 10px;
+}
+
+.unclickable {
+  pointer-events: none;
+  cursor: default;
 }
