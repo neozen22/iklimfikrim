@@ -10,9 +10,9 @@
 
     <link rel="stylesheet" href="/static/styles/bootstrap.min.css" />
     <link rel="stylesheet" href="/static/styles/style.css" />
-    <script src="/static/scripts/bootstrap.min.js"></script>
     <script src="/static/scripts/build/ckeditor.js"></script>
     <script type="module" src="/static/scripts/script.js"></script>
+    <script src="/static/scripts/bootstrap.min.js"></script>
     <title>İklim Fikrim Dergisi</title>
   </head>
   <body>
@@ -51,25 +51,22 @@
 
         <ul class="articles">
           {% for card in articles %}
-          <li class="article-card">
+          <a href="/article/{{card}}" class="article-card">
+            <div class="center">
             <img
-              src="/static/img/thumbnail.jpg"
+              src="{{url_for('static',filename = 'data/article_assets/{}/cover.jpg'.format(card))}}"
               alt=""
               class="article-thumbnail"
             />
-            <p class="article-title">1. Baskı</p>
-          </li>
+            <p class="article-title">{{articles[card]["title"]}}</p>
+          </div>
+          </a>
           {% endfor %}
         </ul>
 
       </div>
     </div>
-    <nav class="navbar navbar-light bg-light">
-      <a class="navbar-brand unclickable" href="#">
-        <img src="/static/img/logo.jpg" width="30" height="30" class="d-inline-block align-top" alt="">
-        Bootstrap
-      </a>
-    </nav>
+
     {% endblock %}
 
   </body>

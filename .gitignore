@@ -286,11 +286,5 @@ API
 Training
 Blog
 About
-<<<<<<< HEAD
-/data
 data/
-data
-=======
-data/
-data
->>>>>>> 456ddf207dd00ce598d816083a71313b042cd26f
+static/data/

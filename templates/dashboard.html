@@ -14,7 +14,7 @@
 </head>
 <body>
   {% block body %}
-  <table class="table table-striped">
+  <table class="table table-striped dashboardtable">
     <thead>
         <tr>
           <th scope="col">#</th>
@@ -32,14 +32,19 @@
         <td>{{articles[article]["title"]}}</td>
         <td>{{articles[article]["creation_date"]}}</td>
         <td>{{articles[article]["hidden"]}}</td>
+        <td><button type="button" class="btn btn-danger">Sil</button><button type="button" class="btn btn-primary button-margin">Sakla</button></td>
+
       </tr>
 
-
+ 
 
 
   {% endfor %}
 </tbody>
+
 </table>
+<!-- <img src="{{url_for('static',filename = 'data/article_assets/1/cover.jpg')}}" alt=""> -->
+
   {% endblock %}
 </body>
 </html>
