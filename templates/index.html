@@ -1,4 +1,4 @@
-{% extends "navbar.html" %}
+
 
 
 <!DOCTYPE html>
@@ -15,6 +15,7 @@
     <script src="/static/scripts/bootstrap.min.js"></script>
     <title>İklim Fikrim Dergisi</title>
   </head>
+  {% extends "navbar.html" %}
   <body>
 
     {% block body %}
@@ -51,6 +52,7 @@
 
         <ul class="articles">
           {% for card in articles %}
+          {% if not articles[card]["hidden"] %}
           <a href="/article/{{card}}" class="article-card">
             <div class="center">
             <img
@@ -61,6 +63,7 @@
             <p class="article-title">{{articles[card]["title"]}}</p>
           </div>
           </a>
+          {% endif %}
           {% endfor %}
         </ul>
 

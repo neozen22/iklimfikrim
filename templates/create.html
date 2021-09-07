@@ -1,3 +1,6 @@
+{% extends "navbar.html" %}
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,15 +14,21 @@
     <script type="module" src="/static/scripts/script.js"></script>
     <title>Makale Yarat</title>
 </head>
+{% block body %}
 
 <body>
-    <nav class="navbar navbar-light bg-light create-navbar">
-        <a class="navbar-brand" href="#">
-          <img src="/static/img/logo.jpg" width="30" height="30" class="d-inline-block align-top" alt="">
-          Makale Yarat
-        </a>
-      </nav>
-    <div class="editor">shsjsjsj</div>
-    
+      {% from "includes/formhelpers.html" import render_field %}
+
+      <form method=post enctype="multipart/form-data">
+        <div class="form-group form-container">
+          <dl>
+            {{render_field(form.title, placeholder="Başlık", class="form-control")}}
+            {{render_field(form.cover, class="form-control file-upload")}}
+
+          </dl>
+          <p><input type=submit value=Yarat class="form-control">
+          </div>
+        </form>
+        {% endblock %}
 </body>
 </html>
