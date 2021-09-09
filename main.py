@@ -1,14 +1,14 @@
 from flask import Flask, render_template, flash, redirect, url_for, session, logging, request, jsonify
-from wtforms import Form, StringField, TextAreaField, PasswordField, validators, FileField
+from wtforms import Form, StringField, TextAreaField, PasswordField, validators, FileField, SubmitField
 from passlib.hash import sha256_crypt
 import os
 import json
-import flask_mysqldb
 from werkzeug.utils import secure_filename
 import datetime
 import logging
-from wtforms.fields.simple import SubmitField
 import werkzeug
+from flask_sqlalchemy import SQLAlchemy
+import jwt
 
 
 class RegisterForm(Form):
@@ -16,17 +16,6 @@ class RegisterForm(Form):
     username = StringField("Kullanıcı Adı", validators=[])
     password = PasswordField("Şifre", validators=[validators.Length(1, 1, "Şifrede boşluk kullanmayınız"), validators.EqualTo("confirm", "Şifre eşleşmiyor")])
     confirm = PasswordField("Şifre Doğrula")
-
-basedir = os.path.abspath(os.path.dirname(__file__))
-
-
-app = Flask(__name__)
-log = logging.getLogger('werkzeug')
-log.setLevel(logging.ERROR)
-app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
-# photos = UploadSet('photos', IMAGES)
-# configure_uploads(app, photos)
-# patch_request_class(app)
 
 class CreateForm(Form):
     title = StringField("", validators=[validators.DataRequired(message="Burayı Boş Bırakmayınız")])
@@ -39,6 +28,36 @@ class EditForm(Form):
 class Dashboardform(Form):
     delete = SubmitField("Sil")
     hide = SubmitField("Sakla")
+
+
+basedir = os.path.abspath(os.path.dirname(__file__))
+
+
+
+
+app = Flask(__name__)
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
+app.secret_key = "sjmiderimbruhmuanlamadimkardesnediyeyimsende"
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///dbdir/test.db'
+db = SQLAlchemy(app)
+
+class User(db.Model):
+    _id = db.Column(db.Integer, primary_key= True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password = db.Column(db.String(80), unique=False, nullable= False)
+    admin = db.Column(db.Boolean)
+
+    def __init__(self, username, email, password) -> None:
+        self.username = username
+        self.email = email
+        self.password = password
+
+# photos = UploadSet('photos', IMAGES)
+# configure_uploads(app, photos)
+# patch_request_class(app)
+
 
 def fetch_articles():
     with open("static/data/articles.json", encoding="utf-8") as articles_file:
@@ -118,7 +137,6 @@ def register():
     else:
         return render_template("register.html", form=form)
 
-
 @app.route("/article/<string:id>")
 def article(id):
     try:
@@ -145,7 +163,7 @@ def create_article():
 
         os.mkdir(path)
         with open(f"static/data/article_assets/{file_number}/article.html", "w", encoding="utf-8") as file:
-            pass
+            file.write(f"<title>{form.title.data}</title>")
         now= datetime.datetime.now()
         article_dict= {
         "title": form.title.data,
@@ -169,15 +187,15 @@ def create_article():
 @app.route("/edit/<string:id>", methods=["GET", "POST"])
 def edit_article(id):  
     form = EditForm(request.form)
+
     if request.method == "POST":
         with open(f"static/data/article_assets/{id}/article.html", "w", encoding="utf-8") as file:
             file.write(request.form.get("content"))
-            flash("kolaydı", "success")
         return redirect("/")
     else:
         try:
             with open(f"static/data/article_assets/{id}/article.html","r", encoding="utf-8") as sj:
-                form.content.data = sj.read()
+                form.content.data = sj.read() 
                 return render_template("edit.html", form= form)
         except FileNotFoundError:
             pass
