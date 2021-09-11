@@ -1,5 +1,5 @@
 :root {
-  --secondary-color: #c9caca;
+  --secondary-color: #ffffff;
 }
 
 body {
@@ -7,7 +7,8 @@ body {
     Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif !important;
   margin: 0;
   padding: 0;
-  background-color: #f8faf9;
+  background-color: #9cffa0;
+  width: 100%;
 }
 
 a {
@@ -16,12 +17,22 @@ a {
 }
 html {
   overflow-x: hidden;
+  padding: 0;
 }
 
 ul {
   list-style: none;
   padding: 0;
   margin: 0;
+}
+
+.main-logo {
+  background-color: var(--secondary-color);
+  border-bottom-left-radius: 50%;
+  border-bottom-right-radius: 50%;
+  height: 40%;
+  width: 60%;
+  
 }
 
 .header-container {
@@ -42,7 +53,7 @@ ul {
 }
 
 .header-container h2 {
-  color: #ffb443;
+  color: #ffdc42;
 }
 
 .about-container {
@@ -56,7 +67,7 @@ ul {
 }
 
 .about-container h1 {
-  color: #ffb443;
+  color: #ffdc42;
 }
 .author {
   font-weight: bold;
@@ -99,7 +110,8 @@ ul {
 }
 
 .flex-column{
-  padding: 0px 20px;
+  padding: 0 45px;
+  padding-bottom: 50px;
   box-sizing: border-box;
 }
 
@@ -126,6 +138,10 @@ ul {
 }
 .navbar-img {
   margin-right: 10px;
+}
+
+.navbar-width{
+  width: 100% !important;
 }
 
 .unclickable {
@@ -193,4 +209,12 @@ ul {
   display: inline !important;
   align-items: center !important;
   text-align: center !important;
+}
+.article-holder {
+  margin: 5%;
+  border-radius: 10px;
+  background-color: var(--secondary-color);
+}
+.article-holder img {
+  width: 30rem;
 }

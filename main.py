@@ -1,3 +1,5 @@
+from enum import unique
+from inspect import Parameter
 from flask import Flask, render_template, flash, redirect, url_for, session, logging, request, jsonify
 from wtforms import Form, StringField, TextAreaField, PasswordField, validators, FileField, SubmitField
 from passlib.hash import sha256_crypt
@@ -9,13 +11,19 @@ import logging
 import werkzeug
 from flask_sqlalchemy import SQLAlchemy
 import jwt
-
+import uuid
+import hashlib
 
 class RegisterForm(Form):
     name = StringField("İsim Soyisim (Mehmet Aydın)", validators=[validators.DataRequired(message="Burayı boş bırakmayınız")])
     username = StringField("Kullanıcı Adı", validators=[])
-    password = PasswordField("Şifre", validators=[validators.Length(1, 1, "Şifrede boşluk kullanmayınız"), validators.EqualTo("confirm", "Şifre eşleşmiyor")])
-    confirm = PasswordField("Şifre Doğrula")
+    password = PasswordField("Şifre", validators=[validators.Length(1, 1, "Şifrede boşluk kullanmayınız")])
+    confirm = PasswordField("Şifre Doğrula", validators=[validators.EqualTo("password", "Şifre eşleşmiyor")])
+
+class LoginForm(Form):
+    username = StringField("Kullanıcı Adı")
+    password = PasswordField("Şifre")
+
 
 class CreateForm(Form):
     title = StringField("", validators=[validators.DataRequired(message="Burayı Boş Bırakmayınız")])
@@ -40,22 +48,23 @@ log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
 app.secret_key = "sjmiderimbruhmuanlamadimkardesnediyeyimsende"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///dbdir/test.db'
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
-
 class User(db.Model):
-    _id = db.Column(db.Integer, primary_key= True)
+    _id = db.Column(db.String(), primary_key= True)
     username = db.Column(db.String(80), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(80), unique=False, nullable= False)
+    password = db.Column(db.String(), unique=False, nullable= False)
+    name = db.Column(db.String(80), unique=False, nullable= True)
     admin = db.Column(db.Boolean)
-
-    def __init__(self, username, email, password) -> None:
+    def __init__(self,_id, username , password, name, admin) -> None:
+        self._id = _id
         self.username = username
-        self.email = email
         self.password = password
+        self.name = name
+        self.admin = admin
 
 # photos = UploadSet('photos', IMAGES)
-# configure_uploads(app, photos)
+# configure_uploads(app, photos)name
 # patch_request_class(app)
 
 
@@ -133,10 +142,23 @@ def dashboard():
 def register():
     form = RegisterForm(request.form)
     if request.method == "POST":
-        pass
+        user = User(_id=uuid.uuid4().hex, username=form.username.data, password=hashlib.sha256(b"form.password.data").hexdigest(), name=form.name.data, admin=False)
+        db.session.add(user)
+        db.session.commit()
+        return redirect("/register")
     else:
         return render_template("register.html", form=form)
 
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    form = LoginForm(request.form)
+    if request.method == "POST":
+        found_user = (User.query.filter_by(username=form.username.data)).delete()
+        print(found_user.password)
+        return redirect("/login")
+
+    else:
+        return render_template("login.html", form=form)
 @app.route("/article/<string:id>")
 def article(id):
     try:
