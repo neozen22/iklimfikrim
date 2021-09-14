@@ -142,10 +142,12 @@ def dashboard():
 def register():
     form = RegisterForm(request.form)
     if request.method == "POST":
-        user = User(_id=uuid.uuid4().hex, username=form.username.data, password=hashlib.sha256(b"form.password.data").hexdigest(), name=form.name.data, admin=False)
-        db.session.add(user)
-        db.session.commit()
-        return redirect("/register")
+        if form.validate_on_submit():
+            user = User(_id=uuid.uuid4().hex, username=form.username.data, password=hashlib.sha256(b"form.password.data").hexdigest(), name=form.name.data, admin=False)
+            db.session.add(user)
+            db.session.commit()
+            return redirect("/")
+            
     else:
         return render_template("register.html", form=form)
 
