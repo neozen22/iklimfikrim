@@ -1,14 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
+
 :root {
   --secondary-color: #ffffff;
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif !important;
   margin: 0;
   padding: 0;
-  background-color: #9cffa0;
+	background: -webkit-linear-gradient(to bottom, #32ff2b, #ceff1b);
+	background: linear-gradient(to top, #ceff1b, #32ff2b);
   width: 100%;
+  max-height: 100%;
+  font-family: 'Poppins', sans-serif;
 }
 
 a {
@@ -86,9 +90,10 @@ ul {
 
 .article-card {
   margin: 5px;
-  
   list-style-type: none;
-  background-color: green;
+	background: -webkit-linear-gradient(to right, #32ff2b, #ceff1b);
+  border-radius: 10px;
+	background: linear-gradient(to left, #ceff1b, #32ff2b);
   width: 20rem;
   height: auto;
   display: flex;
@@ -127,11 +132,13 @@ ul {
 .article-title {
   font-size: 1.4rem;
   font-weight: bold;
+  text-align: center;
+  width: 100%;
+  margin-top: 3rem;
+  margin-bottom: 1rem;
 }
 
-.about-container:hover {
-  /* transform: scale(1.05); */
-}
+
 
 .bg-green {
   background-color: green;
@@ -141,7 +148,13 @@ ul {
 }
 
 .navbar-width{
+
   width: 100% !important;
+}
+
+.navbar-style {
+  position: fixed;
+  bottom: 0;
 }
 
 .unclickable {
@@ -212,9 +225,11 @@ ul {
 }
 .article-holder {
   margin: 5%;
+  padding: 5%;
   border-radius: 10px;
   background-color: var(--secondary-color);
 }
 .article-holder img {
-  width: 30rem;
+  max-width: 100%;
+  height: auto;
 }

@@ -1,31 +1,36 @@
 from enum import unique
 from inspect import Parameter
+import re
 from flask import Flask, render_template, flash, redirect, url_for, session, logging, request, jsonify
-from wtforms import Form, StringField, TextAreaField, PasswordField, validators, FileField, SubmitField
+from wtforms import Form, StringField, TextAreaField, PasswordField, validators, FileField, SubmitField, HiddenField
 from passlib.hash import sha256_crypt
 import os
 import json
+import werkzeug
 from werkzeug.utils import secure_filename
 import datetime
 import logging
 import werkzeug
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import select
 import jwt
 import uuid
 import hashlib
+from functools import wraps
 
 class RegisterForm(Form):
-    name = StringField("İsim Soyisim (Mehmet Aydın)", validators=[validators.DataRequired(message="Burayı boş bırakmayınız")])
-    username = StringField("Kullanıcı Adı", validators=[])
-    password = PasswordField("Şifre", validators=[validators.Length(1, 1, "Şifrede boşluk kullanmayınız")])
-    confirm = PasswordField("Şifre Doğrula", validators=[validators.EqualTo("password", "Şifre eşleşmiyor")])
+    register = HiddenField("")
+    name = StringField("", validators=[validators.DataRequired(message="Burayı boş bırakmayınız")])
+    username = StringField("")
+    password = PasswordField("", validators=[validators.Length(min=1, message="Şifrede boşluk kullanmayınız"), validators.DataRequired(message="Burayı boş bırakmayınız")])
 
 class LoginForm(Form):
-    username = StringField("Kullanıcı Adı")
-    password = PasswordField("Şifre")
+    username = StringField("")
+    password = PasswordField("")
 
 
 class CreateForm(Form):
+    login = HiddenField("")
     title = StringField("", validators=[validators.DataRequired(message="Burayı Boş Bırakmayınız")])
     cover = FileField(label="")
 
@@ -85,7 +90,6 @@ def fetch_articles():
 
 def write_json(new_data, file_number,filename='static/data/articles.json'):
     with open(filename,'r+', encoding='utf-8') as file:
-          # First we load existing data into a dict.
         file_data = json.load(file)
 
         file_data[str(file_number)]= new_data
@@ -94,7 +98,26 @@ def write_json(new_data, file_number,filename='static/data/articles.json'):
         # convert back to json.
         json.dump(file_data, file, indent = 4)
 
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = session["token"]
+        if not token:
+            return jsonify({'message' : 'Token is missing!'}), 403
+
+        try: 
+            data =(jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"]))
+        except:
+            return jsonify({'message' : 'Token is invalid!'}), 403
+
+        return f(*args, **kwargs)
+
+    return decorated
+
+    
+
 @app.route("/")
+@token_required
 def hello_world():
     articles = fetch_articles()
     
@@ -138,35 +161,49 @@ def dashboard():
     articles = fetch_articles()
     return render_template("dashboard.html", articles= articles, form=form)
 
-@app.route("/register", methods= ["GET", "POST"])
-def register():
-    form = RegisterForm(request.form)
-    if request.method == "POST":
-        if form.validate_on_submit():
-            user = User(_id=uuid.uuid4().hex, username=form.username.data, password=hashlib.sha256(b"form.password.data").hexdigest(), name=form.name.data, admin=False)
-            db.session.add(user)
-            db.session.commit()
-            return redirect("/")
-            
-    else:
-        return render_template("register.html", form=form)
+
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    form = LoginForm(request.form)
+    registerform = RegisterForm(request.form)
+    loginform = LoginForm(request.form)
     if request.method == "POST":
-        found_user = (User.query.filter_by(username=form.username.data)).delete()
-        print(found_user.password)
-        return redirect("/login")
+        try:
+            if request.form["form"] == "register":
+                if registerform.validate():
+                    user = User(_id=uuid.uuid4().hex, username=registerform.username.data, password=hashlib.sha256((registerform.password.data).encode("utf-8")).hexdigest(), name=registerform.name.data, admin=False)
+                    # print(hashlib.sha256(registerform.password.data).hexdigest())
+                    db.session.add(user)    
+                    db.session.commit()
+                    print("oldu")
+                else:
+                    print("validate yok")
+                    return redirect("/")
+            elif request.form["form"] == "login":
+                currentuser = User.query.filter_by(username=request.form["username"]).first()
+                if currentuser is None:
+                    pass
+                else:
+                    if (hashlib.sha256((registerform.password.data).encode("utf-8")).hexdigest() == currentuser.password):
+                        token = jwt.encode({'user': currentuser.name, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config["SECRET_KEY"])
+                        session['token'] = token
 
-    else:
-        return render_template("login.html", form=form)
+        except werkzeug.exceptions.BadRequestKeyError:
+            raise
+
+
+    return render_template("login.html", registerform=registerform, loginform=loginform)
+
 @app.route("/article/<string:id>")
 def article(id):
+    with open("static/data/articles.json", encoding="utf-8") as articles_file:
+        article_data = json.load(articles_file)
+        article_title = article_data[id]["title"]
     try:
         with open(f"static/data/article_assets/{id}/article.html","r", encoding="utf-8") as sj:
             article_content = sj.read()
-            return render_template("articleholder.html",article_content=article_content)
+
+            return render_template("articleholder.html",article_content=article_content, article_title=article_title)
     except FileNotFoundError:
         return render_template("404.html")
 
@@ -181,7 +218,12 @@ def page_not_found(e):
 def create_article():
     form = CreateForm(request.form)
     if request.method == "POST":
-        file_number = int(os.listdir("static/data/article_assets")[-1]) + 1
+        try:
+            file_number = int(os.listdir("static/data/article_assets")[-1]) + 1
+        except IndexError:
+            file_number = 1
+            
+        
 
         path = os.path.join("static/data/article_assets", str(file_number))
 
@@ -207,8 +249,8 @@ def create_article():
         return render_template("create.html", form=form)
 
 
-
 @app.route("/edit/<string:id>", methods=["GET", "POST"])
+@token_required
 def edit_article(id):  
     form = EditForm(request.form)
 

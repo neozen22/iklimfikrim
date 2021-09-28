@@ -1,21 +1,61 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/styles/loginstyle.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    <script src="/static/scripts/script.js"></script>
     <title>Login</title>
 </head>
 <body>
-    {% from "includes/formhelpers.html" import render_field %}  
-<form method=post>
-    <dl>
 
-      {{ render_field(form.username) }}
-      {{ render_field(form.password) }}
+  <div class="container" id="container">
+    <div class="form-container sign-up-container">
+      {% from "includes/formhelpers.html" import render_field %}  
+      <form method=post value="sj">
+        <h1>Hesap oluştur</h1>
 
-    </dl>
-    <p><input type=submit value=Register>
-  </form>
+        <dl>
+              <input type="hidden" name="form" value="register">
+              {{ render_field(registerform.register) }}
+              {{render_field(registerform.name, placeholder="İsim Soyisim (Mehmet Aydın)")}}
+              {{ render_field(registerform.username, placeholder="Kullanıcı Adı") }}
+              {{ render_field(registerform.password, placeholder="Şifre") }}
+            </dl>
+            <button type="submit">Hesap Oluştur</button>
+          </form>
+    </div>
+    <div class="form-container sign-in-container">
+      {% from "includes/formhelpers.html" import render_field %}  
+      <form method=post>
+        <h1>Giriş Yap</h1>
+
+        <dl>
+              <input type="hidden" name="form" value="login">
+              {{ render_field(loginform.username, placeholder="Kullanıcı Adı") }}
+              {{ render_field(loginform.password, placeholder="Şifre") }}
+            </dl>
+            <button type="submit">Hesap Oluştur</button>
+          </form>
+    </div>
+    <div class="overlay-container">
+      <div class="overlay">
+        <div class="overlay-panel overlay-left">
+          <h1>Merhaba!</h1>
+          <p>Buradan giriş yapabilirsin!</p>
+          <button class="ghost" id="signIn">Giriş Yap</button>
+        </div>
+        <div class="overlay-panel overlay-right">
+          <h1>Hoşgeldin!</h1>
+          <p>Dergimizin yeni baskılarından haber almak için kayıt olabilirsin!</p>
+          <button class="ghost" id="signUp">Kayıt Ol</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
 </body>
 </html>
