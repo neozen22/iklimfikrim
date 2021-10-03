@@ -88,6 +88,17 @@ def fetch_articles():
 
 # mysql = flask_mysqldb.MySQL(app)
 
+def is_loggedin():
+    try:
+        token = session["token"]
+    except KeyError:
+        return False
+    try:
+        data = jwt.decode(token, app.config["SECRET_KEY"], algorithms=["HS256"])
+        return True
+    except:
+        return False
+
 def write_json(new_data, file_number,filename='static/data/articles.json'):
     with open(filename,'r+', encoding='utf-8') as file:
         file_data = json.load(file)
@@ -97,35 +108,42 @@ def write_json(new_data, file_number,filename='static/data/articles.json'):
         file.seek(0)
         # convert back to json.
         json.dump(file_data, file, indent = 4)
-
-def token_required(f):
+def admin_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        token = session["token"]
-        if not token:
-            return jsonify({'message' : 'Token is missing!'}), 403
+        try:
+            token = session["token"]
+        except KeyError:
+            # return jsonify({'message' : 'Token is missing!'}), 403
+            return redirect("/login")
 
-        try: 
-            data =(jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"]))
-        except:
-            return jsonify({'message' : 'Token is invalid!'}), 403
 
-        return f(*args, **kwargs)
+        data =(jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"]))
+
+        if data["admin"]:
+            return f(*args, **kwargs)
+        else:
+            return jsonify({"message": "Buraya giriş yapmak için admin olmanız gerekiyor"})
+
+
 
     return decorated
 
     
 
 @app.route("/")
-@token_required
-def hello_world():
+def index():
     articles = fetch_articles()
-    
-    return render_template("index.html", articles=articles)
+    try:
+        data = (jwt.decode(session["token"], app.config["SECRET_KEY"], algorithms=["HS256"]))
+    except KeyError:
+        return render_template("index.html", articles=articles)
+    return render_template("index.html", articles=articles, logged_in=is_loggedin(), name=data["name"])
 
 
 
 @app.route("/dashboard", methods=["GET", "POST"] )
+@admin_required
 def dashboard():
     with open("static/data/articles.json", "r+", encoding="utf-8") as a:
         data = json.load(a)
@@ -159,7 +177,8 @@ def dashboard():
     
     form = Dashboardform(request.form)
     articles = fetch_articles()
-    return render_template("dashboard.html", articles= articles, form=form)
+    userdata = jwt.decode(session["token"], app.config["SECRET_KEY"], algorithms=["HS256"])
+    return render_template("dashboard.html", articles= articles, form=form, logged_in=is_loggedin(), name=userdata["name"])
 
 
 
@@ -175,18 +194,15 @@ def login():
                     # print(hashlib.sha256(registerform.password.data).hexdigest())
                     db.session.add(user)    
                     db.session.commit()
-                    print("oldu")
-                else:
-                    print("validate yok")
-                    return redirect("/")
-            elif request.form["form"] == "login":
-                currentuser = User.query.filter_by(username=request.form["username"]).first()
-                if currentuser is None:
-                    pass
-                else:
-                    if (hashlib.sha256((registerform.password.data).encode("utf-8")).hexdigest() == currentuser.password):
-                        token = jwt.encode({'user': currentuser.name, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config["SECRET_KEY"])
-                        session['token'] = token
+
+            currentuser = User.query.filter_by(username=request.form["username"]).first()
+            if currentuser is None:
+                pass
+            else:
+                if (hashlib.sha256((registerform.password.data).encode("utf-8")).hexdigest() == currentuser.password):
+                    token = jwt.encode({'name': currentuser.name,'admin': currentuser.admin ,'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config["SECRET_KEY"])
+                    session['token'] = token
+            return redirect("/")
 
         except werkzeug.exceptions.BadRequestKeyError:
             raise
@@ -215,6 +231,7 @@ def page_not_found(e):
 
 
 @app.route("/create", methods=["GET", "POST"])
+@admin_required
 def create_article():
     form = CreateForm(request.form)
     if request.method == "POST":
@@ -250,7 +267,7 @@ def create_article():
 
 
 @app.route("/edit/<string:id>", methods=["GET", "POST"])
-@token_required
+@admin_required
 def edit_article(id):  
     form = EditForm(request.form)
 
@@ -265,6 +282,7 @@ def edit_article(id):
                 return render_template("edit.html", form= form)
         except FileNotFoundError:
             pass
+
 
 
 if __name__ == "__main__":
