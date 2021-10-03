@@ -269,6 +269,7 @@ def create_article():
 @app.route("/edit/<string:id>", methods=["GET", "POST"])
 @admin_required
 def edit_article(id):  
+    test = 1
     form = EditForm(request.form)
 
     if request.method == "POST":
