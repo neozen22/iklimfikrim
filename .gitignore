@@ -289,3 +289,4 @@ About
 data/
 static/data/
 dbdir/
+static/build

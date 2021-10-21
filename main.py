@@ -17,6 +17,8 @@ import jwt
 import uuid
 import hashlib
 from functools import wraps
+from flask_ckeditor import CKEditor
+
 
 class RegisterForm(Form):
     register = HiddenField("")
@@ -41,6 +43,10 @@ class EditForm(Form):
 class Dashboardform(Form):
     delete = SubmitField("Sil")
     hide = SubmitField("Sakla")
+
+class MasterPassword(Form):
+    email = StringField("email", validators=[validators.DataRequired(message="Burayı boş bırakmayınız")])
+    masterpass = PasswordField("Master Password", validators=[validators.DataRequired(message="Burayı boş bırakmayınız")])
 
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -118,7 +124,12 @@ def admin_required(f):
             return redirect("/login")
 
 
-        data =(jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"]))
+        try:
+            data =(jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"]))
+
+        except jwt.exceptions.ExpiredSignatureError:
+            session.pop("token")
+            return redirect('/login')
 
         if data["admin"]:
             return f(*args, **kwargs)
@@ -137,7 +148,7 @@ def index():
     try:
         data = (jwt.decode(session["token"], app.config["SECRET_KEY"], algorithms=["HS256"]))
     except KeyError:
-        return render_template("index.html", articles=articles)
+        return render_template("index.html", articles=articles, logged_in=False)
     return render_template("index.html", articles=articles, logged_in=is_loggedin(), name=data["name"])
 
 
@@ -209,6 +220,20 @@ def login():
 
 
     return render_template("login.html", registerform=registerform, loginform=loginform)
+
+@app.route("/tlogin", methods=["GET", "POST"])
+def tlogin():
+    passwordform = MasterPassword(request.form)
+    
+    if request.method == "POST":
+        if passwordform.validate():
+            token = jwt.encode({'name': currentuser.name,'admin': currentuser.admin ,'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config["SECRET_KEY"])
+            session['token'] = token
+
+
+
+    return render_template("master_password.html", passform= passwordform)
+
 
 @app.route("/article/<string:id>")
 def article(id):
@@ -283,7 +308,13 @@ def edit_article(id):
         except FileNotFoundError:
             pass
 
+@app.route("/uploadimg", methods=["GET", "POST"])
+def process_img():
+    print("sj")
+
 
 
 if __name__ == "__main__":
+
     app.run(use_reloader=True, debug=True)
+
