@@ -1,12 +1,9 @@
 
-
+import Editor from './ckeditor'
 
 let saveeditor;
-
-
-
 //ckeditor config
-ClassicEditor
+Editor
 				.create( document.querySelector( '.editor' ), {
 					alignment: {
 						options: [ 'left', 'center','right' ]

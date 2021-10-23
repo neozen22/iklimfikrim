@@ -109,6 +109,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+iklimfikrim_env/
 
 # Spyder project settings
 .spyderproject
@@ -289,3 +290,4 @@ About
 data/
 static/data/
 dbdir/
+static/build

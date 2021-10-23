@@ -7,28 +7,140 @@
     <link rel="stylesheet" href="/static/styles/bootstrap.min.css" />
     <link rel="stylesheet" href="/static/styles/style.css" />
     <script src="/static/scripts/bootstrap.min.js"></script>
-    <script src="/static/scripts/build/ckeditor.js"></script>
+    <!-- <script type="module" src="/static/scripts/ckeditor.js"></script> -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script type="module" src="/static/scripts/editor.js"></script>
+    <!-- <script type="module" src="/static/scripts/editor.js"></script> -->
+
+
+
     <title>Editor</title>
 </head>
 <body>
+
     <div class="main-edit-container">
         <div class="title-container">
             {% from "includes/formhelpers.html" import render_field %}  
             <form method=post enctype="multipart/form-data">
                 <dl>
+
                   {{render_field(form.change_title)}}
-                  {{render_field(form.content, class= "editor")}}
+                  {{render_field(form.content)}}
+                  
                 </dl>
                 <p><input type=submit value="Kaydet" class="btn btn-primary button-margin">
               
         </div>
-    <!-- <div class="editor"> -->
+
         
     </div>
 
 </form>
+
+{{ ckeditor.load() }}
+{{ ckeditor.config(name='body') }}
 </div>
+
 </body>
+<!-- <script>
+
+
+    const watchdog = new CKSource.EditorWatchdog();
+			
+    window.watchdog = watchdog;
+    
+    watchdog.setCreator( ( element, config ) => {
+        return CKSource.Editor
+            .create( element, config )
+            .then( editor => {
+                
+                
+                
+    
+                return editor;
+            } )
+    } );
+    
+    watchdog.setDestructor( editor => {
+        
+        
+    
+        return editor.destroy();
+    } );
+    
+    watchdog.on( 'error', handleError );
+    
+    watchdog
+        .create( document.querySelector( '#editor' ), {
+            
+        toolbar: {
+            items: [
+                'heading',
+                '|',
+                'bold',
+                'italic',
+                'link',
+                'bulletedList',
+                'numberedList',
+                '|',
+                'outdent',
+                'indent',
+                '|',
+                'imageUpload',
+                'blockQuote',
+                'insertTable',
+                'mediaEmbed',
+                'undo',
+                'redo',
+                'fontSize',
+                'fontFamily',
+                'fontColor',
+                'alignment',
+                'CKFinder',
+                'imageInsert',
+                'pageBreak'
+            ]
+        },
+        language: 'tr',
+        image: {
+            toolbar: [
+                'imageTextAlternative',
+                'imageStyle:inline',
+                'imageStyle:block',
+                'imageStyle:side'
+            ]
+        },
+        table: {
+            contentToolbar: [
+                'tableColumn',
+                'tableRow',
+                'mergeTableCells'
+            ]
+        },
+        simpleUpload: {
+            // The URL that the images are uploaded to.
+            uploadUrl: 'http://localhost:5000/static/data/article_assets/article_images/sj.jpg',
+
+            // Enable the XMLHttpRequest.withCredentials property.
+            withCredentials: true,
+
+            // Headers sent along with the XMLHttpRequest to the upload server.
+            headers: {
+                'X-CSRF-TOKEN': 'CSRF-Token'
+            }
+        },
+            licenseKey: '',
+            
+            
+            
+        } )
+        .catch( handleError );
+    
+    function handleError( error ) {
+        console.error( 'Oops, something went wrong!' );
+        console.error( 'Please, report the following error on https://github.com/ckeditor/ckeditor5/issues with the build id and the error stack trace:' );
+        console.warn( 'Build id: 1twzjzbqgogv-dkfi01lvul14' );
+        console.error( error );
+    }
+    </script> -->
+
 </html>
