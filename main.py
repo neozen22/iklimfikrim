@@ -17,18 +17,18 @@ import jwt
 import uuid
 import hashlib
 from functools import wraps
-from flask_ckeditor import CKEditor
+from flask_ckeditor import CKEditor, CKEditorField
 
 
-class RegisterForm(Form):
-    register = HiddenField("")
-    name = StringField("", validators=[validators.DataRequired(message="Burayı boş bırakmayınız")])
-    username = StringField("")
-    password = PasswordField("", validators=[validators.Length(min=1, message="Şifrede boşluk kullanmayınız"), validators.DataRequired(message="Burayı boş bırakmayınız")])
+# class RegisterForm(Form):
+#     register = HiddenField("")
+#     name = StringField("", validators=[validators.DataRequired(message="Burayı boş bırakmayınız")])
+#     username = StringField("")
+#     password = PasswordField("", validators=[validators.Length(min=1, message="Şifrede boşluk kullanmayınız"), validators.DataRequired(message="Burayı boş bırakmayınız")])
 
-class LoginForm(Form):
-    username = StringField("")
-    password = PasswordField("")
+# class LoginForm(Form):
+#     username = StringField("")
+#     password = PasswordField("")
 
 
 class CreateForm(Form):
@@ -38,7 +38,7 @@ class CreateForm(Form):
 
 class EditForm(Form):
     change_title = StringField("Yeni Başlık")
-    content = TextAreaField("İçerik")
+    content = CKEditorField("İçerik")
 
 class Dashboardform(Form):
     delete = SubmitField("Sil")
@@ -55,6 +55,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 app = Flask(__name__)
+ckeditor = CKEditor(app)
 log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
 app.secret_key = "sjmiderimbruhmuanlamadimkardesnediyeyimsende"
@@ -114,6 +115,8 @@ def write_json(new_data, file_number,filename='static/data/articles.json'):
         file.seek(0)
         # convert back to json.
         json.dump(file_data, file, indent = 4)
+
+
 def admin_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -136,8 +139,6 @@ def admin_required(f):
         else:
             return jsonify({"message": "Buraya giriş yapmak için admin olmanız gerekiyor"})
 
-
-
     return decorated
 
     
@@ -149,7 +150,7 @@ def index():
         data = (jwt.decode(session["token"], app.config["SECRET_KEY"], algorithms=["HS256"]))
     except KeyError:
         return render_template("index.html", articles=articles, logged_in=False)
-    return render_template("index.html", articles=articles, logged_in=is_loggedin(), name=data["name"])
+    return render_template("index.html", articles=articles)
 
 
 
@@ -189,46 +190,48 @@ def dashboard():
     form = Dashboardform(request.form)
     articles = fetch_articles()
     userdata = jwt.decode(session["token"], app.config["SECRET_KEY"], algorithms=["HS256"])
-    return render_template("dashboard.html", articles= articles, form=form, logged_in=is_loggedin(), name=userdata["name"])
+    return render_template("dashboard.html", articles= articles, form=form)
 
 
+
+# @app.route("/login", methods=["GET", "POST"])
+# def login():
+#     registerform = RegisterForm(request.form)
+#     loginform = LoginForm(request.form)
+#     if request.method == "POST":
+#         try:
+#             if request.form["form"] == "register":
+#                 if registerform.validate():
+#                     user = User(_id=uuid.uuid4().hex, username=registerform.username.data, password=hashlib.sha256((registerform.password.data).encode("utf-8")).hexdigest(), name=registerform.name.data, admin=False)
+#                     # print(hashlib.sha256(registerform.password.data).hexdigest())
+#                     db.session.add(user)    
+#                     db.session.commit()
+
+#             currentuser = User.query.filter_by(username=request.form["username"]).first()
+#             if currentuser is None:
+#                 pass
+#             else:
+#                 if (hashlib.sha256((registerform.password.data).encode("utf-8")).hexdigest() == currentuser.password):
+#                     token = jwt.encode({'name': currentuser.name,'admin': currentuser.admin ,'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config["SECRET_KEY"])
+#                     session['token'] = token
+#             return redirect("/")
+
+#         except werkzeug.exceptions.BadRequestKeyError:
+#             raise
+
+
+#     return render_template("login.html", registerform=registerform, loginform=loginform)
 
 @app.route("/login", methods=["GET", "POST"])
-def login():
-    registerform = RegisterForm(request.form)
-    loginform = LoginForm(request.form)
-    if request.method == "POST":
-        try:
-            if request.form["form"] == "register":
-                if registerform.validate():
-                    user = User(_id=uuid.uuid4().hex, username=registerform.username.data, password=hashlib.sha256((registerform.password.data).encode("utf-8")).hexdigest(), name=registerform.name.data, admin=False)
-                    # print(hashlib.sha256(registerform.password.data).hexdigest())
-                    db.session.add(user)    
-                    db.session.commit()
-
-            currentuser = User.query.filter_by(username=request.form["username"]).first()
-            if currentuser is None:
-                pass
-            else:
-                if (hashlib.sha256((registerform.password.data).encode("utf-8")).hexdigest() == currentuser.password):
-                    token = jwt.encode({'name': currentuser.name,'admin': currentuser.admin ,'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config["SECRET_KEY"])
-                    session['token'] = token
-            return redirect("/")
-
-        except werkzeug.exceptions.BadRequestKeyError:
-            raise
-
-
-    return render_template("login.html", registerform=registerform, loginform=loginform)
-
-@app.route("/tlogin", methods=["GET", "POST"])
 def tlogin():
     passwordform = MasterPassword(request.form)
     
     if request.method == "POST":
         if passwordform.validate():
-            token = jwt.encode({'name': currentuser.name,'admin': currentuser.admin ,'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config["SECRET_KEY"])
-            session['token'] = token
+            if passwordform.masterpass.data == "sjsj":
+                token = jwt.encode({'email': passwordform.email.data,'admin': True ,'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=1)}, app.config["SECRET_KEY"])
+                session['token'] = token
+                return redirect("/dashboard")
 
 
 
@@ -308,13 +311,7 @@ def edit_article(id):
         except FileNotFoundError:
             pass
 
-@app.route("/uploadimg", methods=["GET", "POST"])
-def process_img():
-    print("sj")
-
-
 
 if __name__ == "__main__":
 
     app.run(use_reloader=True, debug=True)
-

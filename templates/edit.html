@@ -10,19 +10,22 @@
     <!-- <script type="module" src="/static/scripts/ckeditor.js"></script> -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <!-- <script type="module" src="/static/scripts/editor.js"></script> -->
-    <script src="/static/build/ckeditor.js"></script>
+
 
 
     <title>Editor</title>
 </head>
 <body>
+
     <div class="main-edit-container">
         <div class="title-container">
             {% from "includes/formhelpers.html" import render_field %}  
             <form method=post enctype="multipart/form-data">
                 <dl>
+
                   {{render_field(form.change_title)}}
-                  {{render_field(form.content, id= "editor")}}
+                  {{render_field(form.content)}}
+                  
                 </dl>
                 <p><input type=submit value="Kaydet" class="btn btn-primary button-margin">
               
@@ -32,12 +35,13 @@
     </div>
 
 </form>
+
+{{ ckeditor.load() }}
+{{ ckeditor.config(name='body') }}
 </div>
-<div>
-    {{{{ ckeditor.load(custom_url=url_for('static', filename='ckeditor/ckeditor.js')) }}}}
-</div>
+
 </body>
-<script>
+<!-- <script>
 
 
     const watchdog = new CKSource.EditorWatchdog();
@@ -137,6 +141,6 @@
         console.warn( 'Build id: 1twzjzbqgogv-dkfi01lvul14' );
         console.error( error );
     }
-    </script>
+    </script> -->
 
 </html>
