@@ -53,7 +53,6 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 
-
 app = Flask(__name__)
 ckeditor = CKEditor(app)
 log = logging.getLogger('werkzeug')
