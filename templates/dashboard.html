@@ -5,12 +5,18 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block links %}
+    
     <link rel="stylesheet" href="/static/styles/bootstrap.min.css" />
     <link rel="stylesheet" href="/static/styles/style.css" />
+    <link rel="stylesheet" href="/static/styles/admin.css">
     <script src="/static/scripts/bootstrap.min.js"></script>
     <script src="/static/scripts/build/ckeditor.js"></script>
     <script type="module" src="/static/scripts/script.js"></script>
+    {% endblock %}
+    {% block title %}
     <title>Dashboard</title>
+    {% endblock %}
 </head>
 <body>
   
@@ -19,6 +25,7 @@
   <div class="create-article">
     <button href="/create" type="button" class="btn btn-success create-button"><a href="/create">Makale Yarat</a></button>
   </div>
+
   <table class="table table-striped dashboardtable">
     <thead>
         <tr>
@@ -37,11 +44,11 @@
         <td>{{articles[article]["title"]}}</td>
         <td>{{articles[article]["creation_date"]}}</td>
         <td>{{articles[article]["hidden"]}}</td>
-        <td><form method=post enctype="multipart/form-data">
+        <td class="table-buttons"><form method=post enctype="multipart/form-data">
             <button type="submit" name="delete" value={{article}} class="btn btn-danger dashboard-button">Sil</button>
             <button type="submit" name="hide" value={{article}} class="btn btn-primary button-margin dashboard-button">sakla</button>
+            <button type="button" class="btn btn-primary button-margin dashboard-button"><a href="/edit/{{article}}">Düzenle</a></button></td>
             </form>
-          <button type="button" class="btn btn-primary button-margin dashboard-button"><a href="/edit/{{article}}">Düzenle</a></button></td>
 
       </tr>
 

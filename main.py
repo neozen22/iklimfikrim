@@ -14,22 +14,11 @@ import werkzeug
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import select
 import jwt
-import uuid
-import hashlib
 from functools import wraps
 from flask_ckeditor import CKEditor, CKEditorField
+from wtforms.compat import with_metaclass
 
-
-# class RegisterForm(Form):
-#     register = HiddenField("")
-#     name = StringField("", validators=[validators.DataRequired(message="Burayı boş bırakmayınız")])
-#     username = StringField("")
-#     password = PasswordField("", validators=[validators.Length(min=1, message="Şifrede boşluk kullanmayınız"), validators.DataRequired(message="Burayı boş bırakmayınız")])
-
-# class LoginForm(Form):
-#     username = StringField("")
-#     password = PasswordField("")
-
+# TODO: logging system
 
 class CreateForm(Form):
     login = HiddenField("")
@@ -45,7 +34,7 @@ class Dashboardform(Form):
     hide = SubmitField("Sakla")
 
 class MasterPassword(Form):
-    email = StringField("email", validators=[validators.DataRequired(message="Burayı boş bırakmayınız")])
+    email = StringField("Email", validators=[validators.DataRequired(message="Burayı boş bırakmayınız")])
     masterpass = PasswordField("Master Password", validators=[validators.DataRequired(message="Burayı boş bırakmayınız")])
 
 
@@ -61,38 +50,14 @@ app.secret_key = "sjmiderimbruhmuanlamadimkardesnediyeyimsende"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///dbdir/test.db'
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
-class User(db.Model):
-    _id = db.Column(db.String(), primary_key= True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    password = db.Column(db.String(), unique=False, nullable= False)
-    name = db.Column(db.String(80), unique=False, nullable= True)
-    admin = db.Column(db.Boolean)
-    def __init__(self,_id, username , password, name, admin) -> None:
-        self._id = _id
-        self.username = username
-        self.password = password
-        self.name = name
-        self.admin = admin
 
-# photos = UploadSet('photos', IMAGES)
-# configure_uploads(app, photos)name
-# patch_request_class(app)
-
+class Admins(db.Model):
+    email = db.Column(db.String(), primary_key=True)
 
 def fetch_articles():
     with open("static/data/articles.json", encoding="utf-8") as articles_file:
         return json.load(articles_file)
 
-# articles = fetch_articles()
-
-#SQL CONFIGURATION
-# app.config["MYSQL_HOST"] = "localhost"
-# app.config["MYSQL_USER"] = "root"
-# app.config["MYSQL_PASSWORD"] = ""
-# app.config[""]
-# app.config["MYSQL_CURSORCLASS"] = "DictCursor"
-
-# mysql = flask_mysqldb.MySQL(app)
 
 def is_loggedin():
     try:
@@ -122,7 +87,6 @@ def admin_required(f):
         try:
             token = session["token"]
         except KeyError:
-            # return jsonify({'message' : 'Token is missing!'}), 403
             return redirect("/login")
 
 
@@ -145,12 +109,7 @@ def admin_required(f):
 @app.route("/")
 def index():
     articles = fetch_articles()
-    try:
-        data = (jwt.decode(session["token"], app.config["SECRET_KEY"], algorithms=["HS256"]))
-    except KeyError:
-        return render_template("index.html", articles=articles, logged_in=False)
     return render_template("index.html", articles=articles)
-
 
 
 @app.route("/dashboard", methods=["GET", "POST"] )
@@ -193,34 +152,6 @@ def dashboard():
 
 
 
-# @app.route("/login", methods=["GET", "POST"])
-# def login():
-#     registerform = RegisterForm(request.form)
-#     loginform = LoginForm(request.form)
-#     if request.method == "POST":
-#         try:
-#             if request.form["form"] == "register":
-#                 if registerform.validate():
-#                     user = User(_id=uuid.uuid4().hex, username=registerform.username.data, password=hashlib.sha256((registerform.password.data).encode("utf-8")).hexdigest(), name=registerform.name.data, admin=False)
-#                     # print(hashlib.sha256(registerform.password.data).hexdigest())
-#                     db.session.add(user)    
-#                     db.session.commit()
-
-#             currentuser = User.query.filter_by(username=request.form["username"]).first()
-#             if currentuser is None:
-#                 pass
-#             else:
-#                 if (hashlib.sha256((registerform.password.data).encode("utf-8")).hexdigest() == currentuser.password):
-#                     token = jwt.encode({'name': currentuser.name,'admin': currentuser.admin ,'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config["SECRET_KEY"])
-#                     session['token'] = token
-#             return redirect("/")
-
-#         except werkzeug.exceptions.BadRequestKeyError:
-#             raise
-
-
-#     return render_template("login.html", registerform=registerform, loginform=loginform)
-
 @app.route("/login", methods=["GET", "POST"])
 def tlogin():
     passwordform = MasterPassword(request.form)
@@ -228,11 +159,13 @@ def tlogin():
     if request.method == "POST":
         if passwordform.validate():
             if passwordform.masterpass.data == "sjsj":
-                token = jwt.encode({'email': passwordform.email.data,'admin': True ,'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=1)}, app.config["SECRET_KEY"])
+                token = jwt.encode({'email': passwordform.email.data,'admin': True ,'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=3  )}, app.config["SECRET_KEY"])
                 session['token'] = token
+                print(passwordform.masterpass.data)
                 return redirect("/dashboard")
 
-
+            else:
+                print(passwordform.masterpass.data)
 
     return render_template("master_password.html", passform= passwordform)
 
@@ -302,12 +235,24 @@ def edit_article(id):
     if request.method == "POST":
         with open(f"static/data/article_assets/{id}/article.html", "w", encoding="utf-8") as file:
             file.write(request.form.get("content"))
+
+        with open("static/data/articles.json", "r+", encoding="utf-8") as article_info:
+            old_article_data = json.load(article_info)
+            old_article_data[id]['title'] = form.change_title.data
+            article_info.seek(0)
+            json.dump(old_article_data, article_info, indent=4)
+            article_info.truncate()
+            
+            
+
         return redirect("/")
     else:
         try:
             with open(f"static/data/article_assets/{id}/article.html","r", encoding="utf-8") as sj:
-                form.content.data = sj.read() 
-                return render_template("edit.html", form= form)
+                form.content.data = sj.read()
+                article_data = fetch_articles()
+                article_title = article_data[id]['title']
+                return render_template("edit.html", form= form, article_title=article_title)
         except FileNotFoundError:
             pass
 

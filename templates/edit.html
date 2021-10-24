@@ -23,7 +23,7 @@
             <form method=post enctype="multipart/form-data">
                 <dl>
 
-                  {{render_field(form.change_title)}}
+                  {{render_field(form.change_title, value=article_title)}}
                   {{render_field(form.content)}}
                   
                 </dl>
