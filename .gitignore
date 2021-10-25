@@ -291,3 +291,4 @@ data/
 static/data/
 dbdir/
 static/build
+config.json

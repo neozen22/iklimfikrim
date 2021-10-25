@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
+
+:root {
+  --secondary-color: #ffffff;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: rgb(198,255,0);
+  background: linear-gradient(0deg, rgba(198,255,0,1) 0%, rgba(0,255,68,1) 57%);
+  width: 100%;
+  font-family: 'Poppins', sans-serif;
+}
+
+a {
+  text-decoration: none !important;
+  color: inherit !important;
+}
+html {
+  overflow-x: hidden;
+  padding: 0;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+
+
+.passform {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+}
+
+
+.admin-main-div {
+    width: 100vw;
+    height: 100vh;
+
+}
+
+
+.sj {
+    border-radius: 20px;
+    text-decoration: none;
+    border: none;
+    margin: 10px;
+    outline: none;
+    padding: 7px;
+}
+
+.dashboardtable {
+    max-width: 95%;
+    margin: 4vh auto;
+    border: solid;
+  }
+  
+
+.table-buttons {
+    width: fit-content;
+    display: flex;
+    float: right;
+
+}
+
+.main-dashboard-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  .create-button {
+    margin: auto !important;
+    
+  }
+

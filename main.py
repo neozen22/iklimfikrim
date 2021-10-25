@@ -17,8 +17,11 @@ import jwt
 from functools import wraps
 from flask_ckeditor import CKEditor, CKEditorField
 from wtforms.compat import with_metaclass
+from config import Config
 
 # TODO: logging system
+# TODO: Config, readme falan
+# TODO: article olmadığında article yok de
 
 class CreateForm(Form):
     login = HiddenField("")
@@ -41,13 +44,15 @@ class MasterPassword(Form):
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
-
+config = Config()
 app = Flask(__name__)
 ckeditor = CKEditor(app)
 log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
-app.secret_key = "sjmiderimbruhmuanlamadimkardesnediyeyimsende"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///dbdir/test.db'
+app.secret_key = config.secret_key
+
+# app.secret_key = "sjmiderimbruhmuanlamadimkardesnediyeyimsende"
+app.config['SQLALCHEMY_DATABASE_URI'] = config.SQLALCHEMY_DATABASE_URI
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
 
@@ -59,16 +64,6 @@ def fetch_articles():
         return json.load(articles_file)
 
 
-def is_loggedin():
-    try:
-        token = session["token"]
-    except KeyError:
-        return False
-    try:
-        data = jwt.decode(token, app.config["SECRET_KEY"], algorithms=["HS256"])
-        return True
-    except:
-        return False
 
 def write_json(new_data, file_number,filename='static/data/articles.json'):
     with open(filename,'r+', encoding='utf-8') as file:
@@ -245,16 +240,21 @@ def edit_article(id):
             
             
 
-        return redirect("/")
+        return redirect("/dashboard")
     else:
         try:
             with open(f"static/data/article_assets/{id}/article.html","r", encoding="utf-8") as sj:
                 form.content.data = sj.read()
                 article_data = fetch_articles()
                 article_title = article_data[id]['title']
-                return render_template("edit.html", form= form, article_title=article_title)
+                try:
+
+                    return render_template("edit.html", form= form, article_title=article_title)
+                except TypeError:
+                    return render_template("404.html")
         except FileNotFoundError:
             pass
+
 
 
 if __name__ == "__main__":

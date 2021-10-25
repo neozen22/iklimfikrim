@@ -1,0 +1,126 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
+
+:root {
+  --secondary-color: #ffffff;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: rgb(198,255,0);
+  background: linear-gradient(0deg, rgba(198,255,0,1) 0%, rgba(0,255,68,1) 57%);
+  width: 100%;
+  font-family: 'Poppins', sans-serif;
+}
+
+.header-container {
+    width: 100vw;
+    height: 20%;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+  
+    align-items: center;
+    display: flex;
+    justify-content: center;
+  }
+  
+.header-container img {
+    margin-top: 2vh;
+    width: 10em;
+  }
+  
+.header-container h2 {
+    color: #ffdc42;
+  }
+
+.flex-column{
+    padding: 0 45px;
+    padding-bottom: 50px;
+    box-sizing: border-box;
+  }
+
+.main-logo {
+    background-color: var(--secondary-color);
+    border-bottom-left-radius: 50%;
+    border-bottom-right-radius: 50%;
+    height: 40vh;
+    width: 60%;
+    
+  }
+
+.about-container {
+  
+    max-width: 80%;
+    margin: 15px auto;
+    text-align: center;
+    background-color: var(--secondary-color);
+    padding: 15px;
+    transition: all 500ms ease-in-out;
+  }
+  
+.about-container h1 {
+    color: #ffdc42;
+  }
+
+.author {
+    font-weight: bold;
+  }
+
+.article-container {
+  
+    max-width: 80%;
+    margin: auto;
+    margin-bottom: 15px;
+  
+    text-align: center;
+    background-color: var(--secondary-color);
+    padding: 15px;
+  }
+
+.articles {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center !important;
+    text-indent: 0;
+    list-style-type: none;
+    list-style: none;
+  }
+
+  .article-card {
+    margin: 5px;
+    list-style-type: none;
+      background: -webkit-linear-gradient(to right, #32ff2b, #ceff1b);
+    border-radius: 10px;
+      background: linear-gradient(to left, #ceff1b, #32ff2b);
+    width: 20rem;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none !important;
+    color: inherit !important;
+    transition: all 300ms ease-in-out;
+  }
+  
+  .article-card:hover {
+    transform: scale(1.06);
+  }
+
+  .center {margin: auto;}
+
+  .article-thumbnail {
+  
+    margin-top: 15px;
+    width: 15rem;
+  }
+
+  .article-title {
+    font-size: 1.4rem;
+    font-weight: bold;
+    text-align: center;
+    width: 100%;
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+  }

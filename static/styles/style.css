@@ -197,18 +197,12 @@ ul {
   text-align: center;
   
 }
-.create-article {
 
-  width: 100%;
-  text-align: center;
-}
 .create-button {
   margin: auto !important;
   
 }
-.main-edit-container {
-  
-}
+
 .cover {
   display: inline;
   align-items: center;
@@ -230,12 +224,29 @@ ul {
   text-align: center !important;
 }
 .article-holder {
+
   margin: 5%;
   padding: 5%;
   border-radius: 10px;
   background-color: var(--secondary-color);
+  word-wrap: break-word !important;
 }
 .article-holder img {
+  margin: auto !important;
   max-width: 100%;
-  height: auto;
+  height: auto !important;
+  word-wrap: break-word;
+
+}
+
+@media screen and (max-width: 400px){
+  .article-holder img {
+    max-width: 100%;
+    margin: 0 !important;
+    height: auto !important;
+  }
+  .article-holder a {
+    text-align: left;
+  
+  }
 }
