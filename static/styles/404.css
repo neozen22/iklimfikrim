@@ -1,30 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
 
-
-:root {
-  --secondary-color: #ffffff;
-}
-
-body {
-  margin: 0;
-  padding: 0;
-  background: rgb(198,255,0);
-  background: linear-gradient(0deg, rgba(198,255,0,1) 0%, rgba(0,255,68,1) 57%);
-  width: 100%;
-  font-family: 'Poppins', sans-serif;
-
-}
-
-a {
-  text-decoration: none !important;
-  color: inherit !important;
-}
-html {
-  overflow-x: hidden;
-  padding: 0;
-}
-
-
+  
 .main-error-container {
     display: flex;
     align-items: center;

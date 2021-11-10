@@ -1,22 +1,16 @@
-from enum import unique
-from inspect import Parameter
-import re
-from flask import Flask, render_template, flash, redirect, url_for, session, logging, request, jsonify
-from wtforms import Form, StringField, TextAreaField, PasswordField, validators, FileField, SubmitField, HiddenField
-from passlib.hash import sha256_crypt
+from flask import Flask, render_template, flash, redirect, session, logging, request, jsonify, url_for
+from wtforms import Form, StringField , PasswordField, validators, FileField, SubmitField, HiddenField
 import os
 import json
 import werkzeug
-from werkzeug.utils import secure_filename
+from werkzeug.utils import secure_filename, send_from_directory
 import datetime
 import logging
 import werkzeug
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import select
 import jwt
 from functools import wraps
-from flask_ckeditor import CKEditor, CKEditorField
-from wtforms.compat import with_metaclass
+from flask_ckeditor import CKEditor, CKEditorField, upload_fail, upload_success
 from config import Config
 
 # TODO: logging system
@@ -41,23 +35,26 @@ class MasterPassword(Form):
     masterpass = PasswordField("Master Password", validators=[validators.DataRequired(message="Burayı boş bırakmayınız")])
 
 
+
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 config = Config()
 app = Flask(__name__)
 ckeditor = CKEditor(app)
-log = logging.getLogger('werkzeug')
-log.setLevel(logging.ERROR)
 app.secret_key = config.secret_key
 
 # app.secret_key = "sjmiderimbruhmuanlamadimkardesnediyeyimsende"
 app.config['SQLALCHEMY_DATABASE_URI'] = config.SQLALCHEMY_DATABASE_URI
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
+app.config['CKEDITOR_PKG_TYPE'] = 'full'
+app.config['CKEDITOR_FILE_UPLOADER'] = "upload"
 
 class Admins(db.Model):
     email = db.Column(db.String(), primary_key=True)
+
+
 
 def fetch_articles():
     with open("static/data/articles.json", encoding="utf-8") as articles_file:
@@ -153,14 +150,13 @@ def tlogin():
     
     if request.method == "POST":
         if passwordform.validate():
-            if passwordform.masterpass.data == "sjsj":
+            if passwordform.masterpass.data == config.master_password:
                 token = jwt.encode({'email': passwordform.email.data,'admin': True ,'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=3  )}, app.config["SECRET_KEY"])
                 session['token'] = token
-                print(passwordform.masterpass.data)
                 return redirect("/dashboard")
-
             else:
-                print(passwordform.masterpass.data)
+                flash("şifre yanlış")
+                return redirect("/login")
 
     return render_template("master_password.html", passform= passwordform)
 
@@ -254,6 +250,19 @@ def edit_article(id):
                     return render_template("404.html")
         except FileNotFoundError:
             pass
+
+@app.route('/files/<filename>')
+def uploaded_files(filename):
+    path = 'static/img/img_assets'
+    return send_from_directory(path, filename)
+
+@app.route('/upload', methods=['POST'])
+@ckeditor.uploader
+def upload():
+    f = request.files.get('upload')
+    f.save(os.path.join('static/img/img_assets', f.filename))
+    url = url_for('uploaded_files', filename=f.filename)
+    return url
 
 
 

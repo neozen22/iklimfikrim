@@ -1,4 +1,5 @@
 {
     "secret_key": "secret key here",
-    "SQLALCHEMY_DATABASE_URI": "sql method and location here"
+    "SQLALCHEMY_DATABASE_URI": "sql method and location here",
+    "master_password": "iklimfikrimdergi"
 }

@@ -20,7 +20,6 @@ body {
     display: flex;
     flex-direction: column;
     text-align: center;
-  
     align-items: center;
     display: flex;
     justify-content: center;
@@ -28,7 +27,7 @@ body {
   
 .header-container img {
     margin-top: 2vh;
-    width: 10em;
+    width: 10rem;
   }
   
 .header-container h2 {
@@ -43,9 +42,9 @@ body {
 
 .main-logo {
     background-color: var(--secondary-color);
-    border-bottom-left-radius: 50%;
-    border-bottom-right-radius: 50%;
-    height: 40vh;
+    border-bottom-left-radius: 40%;
+    border-bottom-right-radius: 40%;
+    height: fit-content;
     width: 60%;
     
   }
@@ -91,9 +90,9 @@ body {
   .article-card {
     margin: 5px;
     list-style-type: none;
-      background: -webkit-linear-gradient(to right, #32ff2b, #ceff1b);
+    background: -webkit-linear-gradient(to right, #32ff2b, #ceff1b);
     border-radius: 10px;
-      background: linear-gradient(to left, #ceff1b, #32ff2b);
+    background: linear-gradient(to left, #ceff1b, #32ff2b);
     width: 20rem;
     height: auto;
     display: flex;
@@ -123,4 +122,15 @@ body {
     width: 100%;
     margin-top: 3rem;
     margin-bottom: 1rem;
+  }
+
+  @media  (max-width: 550px) {
+    .main-logo {
+      background-color: var(--secondary-color);
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
+      height: fit-content;
+      width: 80%;
+      
+    }
   }
