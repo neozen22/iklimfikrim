@@ -31,8 +31,8 @@ class Dashboardform(Form):
     hide = SubmitField("Sakla")
 
 class MasterPassword(Form):
-    email = StringField("Email", validators=[validators.DataRequired(message="Burayı boş bırakmayınız")])
-    masterpass = PasswordField("Master Password", validators=[validators.DataRequired(message="Burayı boş bırakmayınız")])
+    email = StringField("Email", validators=[validators.data_required(message="burayı boş bırakmayınız")])
+    masterpass = PasswordField("Password", validators=[validators.DataRequired(message="Burayı boş bırakmayınız")])
 
 
 
@@ -57,8 +57,14 @@ class Admins(db.Model):
 
 
 def fetch_articles():
-    with open("static/data/articles.json", encoding="utf-8") as articles_file:
-        return json.load(articles_file)
+    try:
+        with open("static/data/articles.json", "r", encoding="utf-8") as articles_file:
+            return json.load(articles_file)
+    except FileNotFoundError:
+        with open("static/data/articles.json", "w+", encoding="utf-8") as articles_file:
+            articles_file.write("")
+            return json.load(articles_file)
+
 
 
 
