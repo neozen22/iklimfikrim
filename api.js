@@ -1,14 +1,35 @@
+const path = require('path');
 const express = require('express');
-const router = express.Router();
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
 
 
 
-router.get("/articles/:id", async (req, res) => {
-    const article_id = req.params.id;
-    console.log(article_id);
-})
+app = express();
+const SetupSimpleExpressServer = (app) => {
+    app.use(express.static(path.join(__dirname, '../public')));
+    app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded({ extended: true }));
+    app.use(cookieParser());
+    app.use(session({
+        secret: 'keyboard cat',
+        resave: false,
+        saveUninitialized: true,
+        cookie: { secure: false }
+    }));
+    app.use((req, res, next) => {
+        res.locals.user = req.user;
+        next();
+    });
+}
 
-//listen to port 4000
-router.listen(4000, () => {
-    console.log("listening on port 4000");
+SetupSimpleExpressServer(app);
+
+app.listen(3000, () => {
+    console.log('listening on port 3000');
+});
+
+app.get('/', (req, res) => {
+    res.json({sj: "bruh"});
 });
