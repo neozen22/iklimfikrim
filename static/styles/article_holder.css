@@ -1,8 +1,13 @@
 
-.article-holder {
 
-    margin: 5%;
-    padding: 5%;
+body {
+  height: 100vh;
+}
+
+.article-holder {
+  height: 100%;
+    margin: 1%;
+    padding: 1%;
     border-radius: 10px;
     background-color: var(--secondary-color);
     word-wrap: break-word !important;

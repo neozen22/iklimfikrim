@@ -1,18 +1,14 @@
 from flask import Flask, render_template, flash, redirect, session, logging, request, jsonify, url_for
-import sqlalchemy
 from wtforms import Form, StringField , PasswordField, validators, FileField, SubmitField, HiddenField
 import os
-import json
-import werkzeug
 from werkzeug.utils import secure_filename, send_from_directory
-import logging
-import werkzeug
 from flask_sqlalchemy import SQLAlchemy
 import jwt
 from functools import wraps
 from flask_ckeditor import CKEditor, CKEditorField, upload_fail, upload_success
 from config import Config
 import datetime
+from PyPDF2 import PdfFileReader
 
 # TODO: logging system
 # TODO: Config, readme falan
@@ -166,7 +162,7 @@ def article(id):
         with open(f"static/data/article_assets/{id}/article.html","r", encoding="utf-8") as sj:
             article_content = sj.read()
 
-            return render_template("articleholder.html",article_content=article_content, article_title=article_title)
+            return render_template("articleholder.html", article_id=id, article_content=article_content, article_title=article_title)
     except FileNotFoundError:
         return render_template("404.html")
 
