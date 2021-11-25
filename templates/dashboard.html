@@ -40,14 +40,14 @@
 
 
       <tr>
-        <th scope="row">{{article}}</th>
-        <td>{{articles[article]["title"]}}</td>
-        <td>{{articles[article]["creation_date"]}}</td>
-        <td>{{articles[article]["hidden"]}}</td>
+        <th scope="row">{{article.id}}</th>
+        <td>{{article.title}}</td>
+        <td>{{article.creation_date}}</td>
+        <td>{{article.hidden}}</td>
         <td class="table-buttons"><form method=post enctype="multipart/form-data">
-            <button type="submit" name="delete" value={{article}} class="btn btn-danger dashboard-button">Sil</button>
-            <button type="submit" name="hide" value={{article}} class="btn btn-primary button-margin dashboard-button">sakla</button>
-            <button type="button" class="btn btn-primary button-margin dashboard-button"><a href="/edit/{{article}}">Düzenle</a></button></td>
+            <button type="submit" name="delete" value={{article.id}} class="btn btn-danger dashboard-button">Sil</button>
+            <button type="submit" name="hide" value={{article.id}} class="btn btn-primary button-margin dashboard-button">sakla</button>
+            <button type="button" class="btn btn-primary button-margin dashboard-button"><a href="/edit/{{article.id}}">Düzenle</a></button></td>
             </form>
 
       </tr>

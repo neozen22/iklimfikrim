@@ -54,15 +54,15 @@
 
         <ul class="articles">
           {% for card in articles %}
-          {% if not articles[card]["hidden"] %}
-          <a href="/article/{{card}}" class="article-card">
+          {% if not card.hidden %}
+          <a href="/article/{{card.id}}" class="article-card">
             <div class="center">
             <img
-              src="{{url_for('static',filename = 'data/article_assets/{}/cover.jpg'.format(card))}}"
+              src="{{url_for('static',filename = 'data/article_assets/{}/cover.jpg'.format(card.id))}}"
               alt=""
               class="article-thumbnail"
             />
-            <p class="article-title">{{articles[card]["title"]}}</p>
+            <p class="article-title">{{card.title}}</p>
           </div>
           </a>
           {% endif %}
